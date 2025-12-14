@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Target, Eye, Shield, Users, Award } from "lucide-react";
-import teamImage from "@assets/warehouse_logistics__23b6dc46.jpg";
+import teamImage from "@assets/stock_images/warehouse_logistics__23b6dc46.jpg";
 
 export default function About() {
   return (

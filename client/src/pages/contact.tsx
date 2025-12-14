@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle } from "lucide-react";
 import { contactFormSchema, type ContactFormData } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import heroImage from "@assets/industrial_shipping__dca51243.jpg";
+import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
 
 export default function Contact() {
   const { toast } = useToast();
@@ -75,7 +75,7 @@ export default function Contact() {
         <div className="absolute inset-0 opacity-20">
           <img
             src={heroImage}
-            alt="Contact SecureCargo"
+            alt="Contact Scotlink Logistics for Cargo Securing Services"
             className="w-full h-full object-cover opacity-100"
           />
         </div>
@@ -252,8 +252,8 @@ export default function Contact() {
                     </div>
                     <div>
                       <h4 className="font-medium text-foreground">Email</h4>
-                      <a href="mailto:info@securecargo.com" className="text-muted-foreground hover:text-primary transition-colors">
-                        info@scotlinklogistics.com
+                      <a href="mailto:sales@scotlinklogistics.com" className="text-muted-foreground hover:text-primary transition-colors">
+                        sales@scotlinklogistics.com
                       </a>
                     </div>
                   </div>
@@ -273,10 +273,10 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/*<Card className="overflow-hidden" data-testid="card-map">
+              <Card className="overflow-hidden" data-testid="card-map">
                 <div className="h-[300px] bg-muted">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2176767611947!2d-73.98731968459418!3d40.75797794291559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115492.45182228551!2d55.30787129273324!3d25.23223882253816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x76640f6e55a63d3%3A0x28a208e4d8c0889a!2sScotlink%20Logistics%20Services%20LLC!5e0!3m2!1sen!2sae!4v1765718236945!5m2!1sen!2sae"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -286,7 +286,7 @@ export default function Contact() {
                     title="Scotlink Logistics Location"
                   />
                 </div>
-              </Card>*/}
+              </Card>
             </div>
           </div>
         </div>

@@ -9,15 +9,15 @@ export default defineConfig({
     react(),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
+      process.env.REPL_ID !== undefined
       ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
+        await import("@replit/vite-plugin-cartographer").then((m) =>
+          m.cartographer(),
+        ),
+        await import("@replit/vite-plugin-dev-banner").then((m) =>
+          m.devBanner(),
+        ),
+      ]
       : []),
   ],
   css: {
@@ -25,14 +25,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname,"./src"),
-      "@shared": path.resolve(__dirname,"../shared"),
+      "@": path.resolve(__dirname, "./src"),
+      "@shared": path.resolve(__dirname, "../shared"),
       "@assets": path.resolve(__dirname, "./src/assets"),
     },
   },
   root: '.',
   assetsInclude: ['**/*.JPG', '**/*.jpg'],
- build: {
+  build: {
     outDir: "../dist/client",
     emptyOutDir: true,
   },

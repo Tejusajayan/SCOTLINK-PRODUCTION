@@ -7,13 +7,10 @@ import {
   type InsertGalleryImage,
   type ClientLogo,
   type InsertClientLogo,
-  type ContactSubmission,
-  type InsertContactSubmission,
+  clientLogos,
   users,
   services,
-  galleryImages,
-  clientLogos,
-  contactSubmissions
+  galleryImages
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import session from "express-session";
@@ -40,6 +37,8 @@ export interface IStorage {
   getGalleryImages(): Promise<GalleryImage[]>;
   getGalleryImage(id: string): Promise<GalleryImage | undefined>;
   createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage>;
+  createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage>;
+  updateGalleryImage(id: string, updates: Partial<InsertGalleryImage>): Promise<GalleryImage | undefined>;
   deleteGalleryImage(id: string): Promise<boolean>;
 
   getClientLogos(): Promise<ClientLogo[]>;
@@ -47,11 +46,6 @@ export interface IStorage {
   createClientLogo(logo: InsertClientLogo): Promise<ClientLogo>;
   updateClientLogo(id: string, logo: Partial<InsertClientLogo>): Promise<ClientLogo | undefined>;
   deleteClientLogo(id: string): Promise<boolean>;
-
-  getContactSubmissions(): Promise<ContactSubmission[]>;
-  getContactSubmission(id: string): Promise<ContactSubmission | undefined>;
-  createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
-  deleteContactSubmission(id: string): Promise<boolean>;
 
   sessionStore: session.Store;
 }
@@ -179,6 +173,14 @@ export class PgStorage implements IStorage {
     return image as GalleryImage;
   }
 
+  async updateGalleryImage(id: string, updates: Partial<InsertGalleryImage>): Promise<GalleryImage | undefined> {
+    const result = await db.update(galleryImages)
+      .set(updates)
+      .where(eq(galleryImages.id, id))
+      .returning();
+    return result[0];
+  }
+
   async deleteGalleryImage(id: string): Promise<boolean> {
     const result = await db.delete(galleryImages).where(eq(galleryImages.id, id)).returning();
     return result.length > 0;
@@ -210,31 +212,6 @@ export class PgStorage implements IStorage {
 
   async deleteClientLogo(id: string): Promise<boolean> {
     const result = await db.delete(clientLogos).where(eq(clientLogos.id, id)).returning();
-    return result.length > 0;
-  }
-
-  async getContactSubmissions(): Promise<ContactSubmission[]> {
-    return await db.select().from(contactSubmissions).orderBy(contactSubmissions.createdAt);
-  }
-
-  async getContactSubmission(id: string): Promise<ContactSubmission | undefined> {
-    const result = await db.select().from(contactSubmissions).where(eq(contactSubmissions.id, id)).limit(1);
-    return result[0];
-  }
-
-  async createContactSubmission(insertSubmission: InsertContactSubmission): Promise<ContactSubmission> {
-    const id = randomUUID();
-    const submission = {
-      ...insertSubmission,
-      id,
-      createdAt: new Date(),
-    };
-    await db.insert(contactSubmissions).values(submission);
-    return submission as ContactSubmission;
-  }
-
-  async deleteContactSubmission(id: string): Promise<boolean> {
-    const result = await db.delete(contactSubmissions).where(eq(contactSubmissions.id, id)).returning();
     return result.length > 0;
   }
 }

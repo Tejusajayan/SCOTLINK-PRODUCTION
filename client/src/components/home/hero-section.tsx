@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Package } from "lucide-react";
-import heroImage from "@assets/industrial_shipping__dca51243.jpg";
+import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
 
 export function HeroSection() {
   return (

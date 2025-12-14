@@ -28,11 +28,10 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b"
           : "bg-background"
-      }`}
+        }`}
       data-testid="header"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,11 +48,10 @@ export function Header() {
               <Link key={link.href} href={link.href}>
                 <Button
                   variant="ghost"
-                  className={`relative px-4 ${
-                    location === link.href
+                  className={`relative px-4 ${location === link.href
                       ? "text-primary font-medium after:absolute after:bottom-0 after:left-4 after:right-4 after:h-0.5 after:bg-primary after:rounded-full"
                       : "text-muted-foreground"
-                  }`}
+                    }`}
                   data-testid={`link-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {link.label}

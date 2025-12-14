@@ -96,13 +96,6 @@ export async function registerRoutes(
         message: sanitizeInput(data.message),
       };
 
-      // Store submission with sanitized data
-      const submission = await storage.createContactSubmission(sanitizedData);
-
-      // Record this submission
-      recentSubmissions.push(now);
-      contactSubmissions.set(clientIp, recentSubmissions);
-
       const timestamp = new Date().toISOString();
       console.log("New contact submission:", {
         name: sanitizedData.name,
@@ -111,6 +104,14 @@ export async function registerRoutes(
         message: sanitizedData.message,
         timestamp,
       });
+
+      // Format the email content
+      const mailContent = `
+Full name: ${sanitizedData.name}
+Email: ${sanitizedData.email}
+Phone: ${sanitizedData.phone}
+Message: ${sanitizedData.message}
+      `;
 
       if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
         try {
@@ -122,30 +123,36 @@ export async function registerRoutes(
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS,
             },
+            tls: {
+              rejectUnauthorized: false
+            }
           });
 
           await transporter.sendMail({
             from: process.env.SMTP_FROM || process.env.SMTP_USER,
-            to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
-            subject: `New Contact Form Submission from ${sanitizedData.name}`,
+            to: process.env.CONTACT_EMAIL || process.env.SMTP_USER, // Fallback to SMTP user if contact email not set
+            subject: `New Contact Form Submission from ${sanitizedData.name} `,
+            text: mailContent, // Use plain text as requested for the format
             html: `
-              <h2>New Contact Form Submission</h2>
-              <p><strong>Name:</strong> ${sanitizedData.name}</p>
-              <p><strong>Email:</strong> ${sanitizedData.email}</p>
-              <p><strong>Phone:</strong> ${sanitizedData.phone}</p>
-              <p><strong>Message:</strong></p>
-              <p>${sanitizedData.message.replace(/\n/g, "<br>")}</p>
-              <hr>
-              <p><small>Received at: ${timestamp}</small></p>
-            `,
+        < h2 > New Contact Form Submission </h2>
+          < p > <strong>Full name: </strong> ${sanitizedData.name}</p >
+            <p><strong>Email: </strong> ${sanitizedData.email}</p >
+              <p><strong>Phone: </strong> ${sanitizedData.phone}</p >
+                <p><strong>Message: </strong></p >
+                  <p>${sanitizedData.message.replace(/\n/g, "<br>")} </p>
+                    < hr >
+                    <p><small>Received at: ${timestamp} </small></p >
+                      `,
           });
-          console.log("Contact email sent successfully");
         } catch (emailError) {
-          console.error("Failed to send email notification:", emailError);
+          console.error("Failed to send email notification");
+          return res.status(500).json({ error: "Failed to send email" });
         }
+      } else {
+        return res.status(500).json({ error: "Email configuration missing" });
       }
 
-      res.status(201).json({ success: true, id: submission.id });
+      res.status(200).json({ success: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: "Invalid form data", details: error.errors });
@@ -254,6 +261,23 @@ export async function registerRoutes(
     }
   });
 
+  app.patch("/api/admin/gallery/reorder", authMiddleware, async (req, res) => {
+    try {
+      const { items } = req.body;
+      if (!Array.isArray(items)) {
+        return res.status(400).json({ error: "Items must be an array" });
+      }
+
+      await Promise.all(items.map(async (item: { id: string; order: number }) => {
+        await storage.updateGalleryImage(item.id, { order: item.order });
+      }));
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to reorder images" });
+    }
+  });
+
   app.get("/api/admin/client-logos", authMiddleware, async (req, res) => {
     try {
       const logos = await storage.getClientLogos();
@@ -305,47 +329,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/admin/contact-submissions", authMiddleware, async (req, res) => {
-    try {
-      const submissions = await storage.getContactSubmissions();
-      res.json(submissions);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch submissions" });
-    }
-  });
 
-  app.delete("/api/admin/contact-submissions/:id", authMiddleware, async (req, res) => {
-    try {
-      const success = await storage.deleteContactSubmission(req.params.id);
-      if (!success) {
-        return res.status(404).json({ error: "Submission not found" });
-      }
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete submission" });
-    }
-  });
-
-  app.get("/api/admin/contact-submissions/export/csv", authMiddleware, async (req, res) => {
-    try {
-      const submissions = await storage.getContactSubmissions();
-      const headers = ["Name", "Email", "Phone", "Message", "Date"];
-      const rows = submissions.map((s) => [
-        s.name.replace(/,/g, ";"),
-        s.email,
-        s.phone,
-        s.message.replace(/,/g, ";").replace(/\n/g, " "),
-        new Date(s.createdAt).toLocaleString(),
-      ]);
-      const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-
-      res.setHeader("Content-Type", "text/csv");
-      res.setHeader("Content-Disposition", "attachment; filename=contact_submissions.csv");
-      res.send(csv);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to export CSV" });
-    }
-  });
 
   // Admin User Management Routes
   app.get("/api/admin/users", authMiddleware, async (req, res) => {
@@ -384,7 +368,7 @@ export async function registerRoutes(
 
       const salt = randomBytes(16).toString("hex");
       const buf = (await scryptAsync(password, salt, 64)) as Buffer;
-      const hashedPassword = `${buf.toString("hex")}.${salt}`;
+      const hashedPassword = `${buf.toString("hex")}.${salt} `;
 
       const user = await storage.createUser({
         username,
@@ -447,7 +431,7 @@ export async function registerRoutes(
 
       const salt = randomBytes(16).toString("hex");
       const buf = (await scryptAsync(newPassword, salt, 64)) as Buffer;
-      const hashedPassword = `${buf.toString("hex")}.${salt}`;
+      const hashedPassword = `${buf.toString("hex")}.${salt} `;
 
       const updatedUser = await storage.updateUserPassword(id, hashedPassword);
       if (!updatedUser) {

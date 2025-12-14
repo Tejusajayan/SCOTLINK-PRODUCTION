@@ -16,10 +16,10 @@ declare module "http" {
 }
 
 app.use(cors({
-    origin: 'https://www.scotlinklogistics.com', // change to your domain in production for security
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  }));
+  origin: 'https://www.scotlinklogistics.com', // change to your domain in production for security
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
 app.use(
   express.json({

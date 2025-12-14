@@ -6,13 +6,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, ImageIcon } from "lucide-react";
 import type { GalleryImage } from "@shared/schema";
 
-import autoImage from "@assets/automobile_car_vehic_1b402b37.jpg";
-import heavyImage from "@assets/heavy_machinery_equi_09b3c560.jpg";
-import woodenImage from "@assets/wooden_crate_packing_50a7b666.jpg";
-import palletImage from "@assets/palletization_wareho_ae154d1b.jpg";
-import bundlingImage from "@assets/cargo_bundling_strap_d7a882d9.jpg";
-import heroImage from "@assets/industrial_shipping__dca51243.jpg";
-import teamImage from "@assets/warehouse_logistics__23b6dc46.jpg";
+import autoImage from "@assets/stock_images/automobile_car_vehic_1b402b37.jpg";
+import heavyImage from "@assets/stock_images/heavy_machinery_equi_09b3c560.jpg";
+import woodenImage from "@assets/stock_images/wooden_crate_packing_50a7b666.jpg";
+import palletImage from "@assets/stock_images/palletization_wareho_ae154d1b.jpg";
+import bundlingImage from "@assets/stock_images/cargo_bundling_strap_d7a882d9.jpg";
+import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
+import teamImage from "@assets/stock_images/warehouse_logistics__23b6dc46.jpg";
 
 const defaultGallery = [
   { id: "1", imageUrl: heroImage, caption: "Shipping container cargo operations", category: "General" },

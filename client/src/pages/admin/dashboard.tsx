@@ -30,18 +30,32 @@ import {
   Settings,
   Image,
   Users,
-  Mail,
   Plus,
   Trash2,
-  Download,
   Edit,
   Loader2,
   Package,
   UserPlus,
   Key
 } from "lucide-react";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { Service, GalleryImage, ClientLogo, ContactSubmission } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy
+} from "@dnd-kit/sortable";
+import { SortableGalleryItem } from "./gallery-sortable-item";
+import type { Service, GalleryImage, ClientLogo } from "@shared/schema";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("adminToken");
@@ -85,6 +99,88 @@ export default function AdminDashboard() {
     },
   });
 
+  const [items, setItems] = useState<GalleryImage[]>([]);
+
+  useEffect(() => {
+    if (galleryImages) {
+      setItems(galleryImages);
+    }
+  }, [galleryImages]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const reorderMutation = useMutation({
+    mutationFn: async (items: { id: string; order: number }[]) => {
+      const res = await fetch("/api/admin/gallery/reorder", {
+        method: "PATCH",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
+      if (!res.ok) throw new Error("Failed to update order");
+    },
+    onSuccess: () => {
+      toast({ title: "Gallery order updated" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/gallery"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to update order", variant: "destructive" });
+    }
+  });
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        const newItems = arrayMove(items, oldIndex, newIndex);
+
+        // Prepare reorder payload
+        const reorderPayload = newItems.map((item, index) => ({
+          id: item.id,
+          order: index,
+        }));
+
+        reorderMutation.mutate(reorderPayload);
+
+        return newItems;
+      });
+    }
+  }
+
+  const deleteGalleryImageMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/gallery/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) throw new Error("Failed to delete image");
+    },
+    onSuccess: () => {
+      toast({ title: "Gallery image deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/gallery"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete image", variant: "destructive" });
+    }
+  });
+
+
+
   const { data: clientLogos, isLoading: logosLoading } = useQuery<ClientLogo[]>({
     queryKey: ["/api/admin/client-logos"],
     queryFn: async () => {
@@ -94,47 +190,7 @@ export default function AdminDashboard() {
     },
   });
 
-  const { data: submissions, isLoading: submissionsLoading } = useQuery<ContactSubmission[]>({
-    queryKey: ["/api/admin/contact-submissions"],
-    queryFn: async () => {
-      const res = await fetch("/api/admin/contact-submissions", { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error("Failed to fetch submissions");
-      return res.json();
-    },
-  });
 
-  const deleteSubmissionMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/contact-submissions/${id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      });
-      if (!res.ok) throw new Error("Failed to delete");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/contact-submissions"] });
-      toast({ title: "Submission deleted" });
-    },
-  });
-
-  const exportCSV = () => {
-    if (!submissions) return;
-    const headers = ["Name", "Email", "Phone", "Message", "Date"];
-    const rows = submissions.map((s) => [
-      s.name,
-      s.email,
-      s.phone,
-      s.message.replace(/,/g, ";"),
-      new Date(s.createdAt).toLocaleString(),
-    ]);
-    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "contact_submissions.csv";
-    a.click();
-  };
 
   return (
     <div className="min-h-screen bg-muted/30" data-testid="page-admin-dashboard">
@@ -192,15 +248,7 @@ export default function AdminDashboard() {
               <div className="text-2xl font-bold">{clientLogos?.length || 0}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Messages</CardTitle>
-              <Mail className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{submissions?.length || 0}</div>
-            </CardContent>
-          </Card>
+
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -217,10 +265,7 @@ export default function AdminDashboard() {
               <Users className="w-4 h-4" />
               Client Logos
             </TabsTrigger>
-            <TabsTrigger value="submissions" className="gap-2" data-testid="tab-submissions">
-              <Mail className="w-4 h-4" />
-              Contact Submissions
-            </TabsTrigger>
+
             <TabsTrigger value="users" className="gap-2" data-testid="tab-users">
               <UserPlus className="w-4 h-4" />
               User Management
@@ -670,59 +715,27 @@ export default function AdminDashboard() {
                   <div className="flex justify-center py-8">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                   </div>
-                ) : galleryImages && galleryImages.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {galleryImages.map((image) => (
-                      <div key={image.id} className="relative group rounded-lg overflow-hidden">
-                        <img src={image.imageUrl} alt={image.caption || ""} className="w-full aspect-square object-cover" />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="destructive" size="icon">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Delete Gallery Image</DialogTitle>
-                              </DialogHeader>
-                              <p className="text-muted-foreground">
-                                Are you sure you want to delete this image? This action cannot be undone.
-                              </p>
-                              <div className="flex gap-2 justify-end mt-4">
-                                <DialogTrigger asChild>
-                                  <Button variant="outline">Cancel</Button>
-                                </DialogTrigger>
-                                <Button
-                                  variant="destructive"
-                                  onClick={async () => {
-                                    try {
-                                      const res = await fetch(`/api/admin/gallery/${image.id}`, {
-                                        method: "DELETE",
-                                        headers: getAuthHeaders(),
-                                      });
-
-                                      if (!res.ok) throw new Error("Failed to delete image");
-
-                                      toast({ title: "Gallery image deleted successfully" });
-                                      queryClient.invalidateQueries({ queryKey: ["/api/admin/gallery"] });
-                                    } catch (error) {
-                                      toast({
-                                        title: "Failed to delete image",
-                                        variant: "destructive"
-                                      });
-                                    }
-                                  }}
-                                >
-                                  Delete
-                                </Button>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        </div>
+                ) : items.length > 0 ? (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={items}
+                      strategy={rectSortingStrategy}
+                    >
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {items.map((image) => (
+                          <SortableGalleryItem
+                            key={image.id}
+                            image={image}
+                            onDelete={(id) => deleteGalleryImageMutation.mutate(id)}
+                          />
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </SortableContext>
+                  </DndContext>
                 ) : (
                   <p className="text-center text-muted-foreground py-8">
                     No gallery images yet. Add images to display them on the website.
@@ -869,92 +882,6 @@ export default function AdminDashboard() {
                 ) : (
                   <p className="text-center text-muted-foreground py-8">
                     No client logos yet. Add logos to display them in the carousel.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="submissions">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between gap-4">
-                <CardTitle>Contact Submissions</CardTitle>
-                <Button size="sm" variant="outline" className="gap-2" onClick={exportCSV} data-testid="button-export-csv">
-                  <Download className="w-4 h-4" />
-                  Export CSV
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {submissionsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                  </div>
-                ) : submissions && submissions.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {submissions.map((submission) => (
-                        <TableRow key={submission.id}>
-                          <TableCell className="font-medium">{submission.name}</TableCell>
-                          <TableCell>{submission.email}</TableCell>
-                          <TableCell>{submission.phone}</TableCell>
-                          <TableCell>{new Date(submission.createdAt).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button variant="ghost" size="sm">View</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Message from {submission.name}</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <Label>Email</Label>
-                                      <p className="text-muted-foreground">{submission.email}</p>
-                                    </div>
-                                    <div>
-                                      <Label>Phone</Label>
-                                      <p className="text-muted-foreground">{submission.phone}</p>
-                                    </div>
-                                    <div>
-                                      <Label>Message</Label>
-                                      <p className="text-muted-foreground">{submission.message}</p>
-                                    </div>
-                                    <div>
-                                      <Label>Received</Label>
-                                      <p className="text-muted-foreground">
-                                        {new Date(submission.createdAt).toLocaleString()}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => deleteSubmissionMutation.mutate(submission.id)}
-                              >
-                                <Trash2 className="w-4 h-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">
-                    No contact submissions yet.
                   </p>
                 )}
               </CardContent>
@@ -1145,6 +1072,6 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
+    </div >
   );
 }

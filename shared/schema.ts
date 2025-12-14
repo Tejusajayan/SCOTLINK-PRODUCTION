@@ -59,18 +59,7 @@ export const insertClientLogoSchema = createInsertSchema(clientLogos).omit({ id:
 export type InsertClientLogo = z.infer<typeof insertClientLogoSchema>;
 export type ClientLogo = typeof clientLogos.$inferSelect;
 
-export const contactSubmissions = pgTable("contact_submissions", {
-  id: varchar("id", { length: 36 }).primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone").notNull(),
-  message: text("message").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
 
-export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({ id: true, createdAt: true });
-export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
-export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 
 export const contactFormSchema = z.object({
   name: z.string()

@@ -12,7 +12,7 @@ import {
   ArrowRight,
   CheckCircle
 } from "lucide-react";
-import heroImage from "@assets/industrial_shipping__dca51243.jpg";
+import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
 
 const reasons = [
   {
