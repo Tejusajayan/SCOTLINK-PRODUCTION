@@ -20,7 +20,7 @@ import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle } from "lucide-r
 import { SEO } from "@/components/seo";
 import { contactFormSchema, type ContactFormData } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
+import heroImage from "@assets/industrial_shipping__dca51243.jpg";
 
 export default function Contact() {
   const { toast } = useToast();
