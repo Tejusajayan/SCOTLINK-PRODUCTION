@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, X, Anchor } from "lucide-react";
+import LOGO from "@assets/LOGO.png";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -29,18 +30,15 @@ export function Header() {
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
-          ? "bg-background/95 backdrop-blur-md shadow-sm border-b"
-          : "bg-background"
+        ? "bg-background/95 backdrop-blur-md shadow-sm border-b"
+        : "bg-background"
         }`}
       data-testid="header"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2" data-testid="link-logo">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Anchor className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Scotlink Logistics</span>
+            <img src={LOGO} alt="Scotlink Logistics" className="h-20 w-auto object-contain" />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1" data-testid="nav-desktop">
@@ -49,8 +47,8 @@ export function Header() {
                 <Button
                   variant="ghost"
                   className={`relative px-4 ${location === link.href
-                      ? "text-primary font-medium after:absolute after:bottom-0 after:left-4 after:right-4 after:h-0.5 after:bg-primary after:rounded-full"
-                      : "text-muted-foreground"
+                    ? "text-primary font-medium after:absolute after:bottom-0 after:left-4 after:right-4 after:h-0.5 after:bg-primary after:rounded-full"
+                    : "text-muted-foreground"
                     }`}
                   data-testid={`link-nav-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
