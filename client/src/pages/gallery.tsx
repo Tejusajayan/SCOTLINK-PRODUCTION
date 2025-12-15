@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/layout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, ImageIcon } from "lucide-react";
+import { SEO } from "@/components/seo";
 import type { GalleryImage } from "@shared/schema";
 
 import autoImage from "@assets/stock_images/automobile_car_vehic_1b402b37.jpg";
@@ -56,6 +57,10 @@ export default function Gallery() {
 
   return (
     <Layout>
+      <SEO
+        title="Project Gallery"
+        description="View our latest projects showcasing our professional lashing, packing, and cargo securing work."
+      />
       <section className="relative py-20 lg:py-28 bg-[#2D3748]" data-testid="section-gallery-hero">
         <div className="absolute inset-0 opacity-20">
           <img

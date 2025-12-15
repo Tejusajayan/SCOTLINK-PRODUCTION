@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Layout } from "@/components/layout/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Car, Truck, Package, Layers, Link2, Loader2 } from "lucide-react";
+import { SEO } from "@/components/seo";
 import type { Service } from "@shared/schema";
 
 import autoImage from "@assets/stock_images/automobile_car_vehic_1b402b37.jpg";
@@ -85,6 +86,10 @@ export default function Services() {
 
   return (
     <Layout>
+      <SEO
+        title="Our Services - Lashing & Packing Solutions"
+        description="Comprehensive lashing and packing solutions including automobile lashing, heavy equipment lashing, wooden packing, palletization, and bundling services."
+      />
       <section className="relative py-20 lg:py-28 bg-[#2D3748]" data-testid="section-services-hero">
         <div className="absolute inset-0 opacity-20">
           <img

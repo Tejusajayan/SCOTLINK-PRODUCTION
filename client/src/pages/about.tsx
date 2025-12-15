@@ -2,10 +2,15 @@ import { Layout } from "@/components/layout/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Target, Eye, Shield, Users, Award } from "lucide-react";
 import teamImage from "@assets/stock_images/warehouse_logistics__23b6dc46.jpg";
+import { SEO } from "@/components/seo";
 
 export default function About() {
   return (
     <Layout>
+      <SEO
+        title="About Us - Lashing & Packing Experts"
+        description="Scotlink Logistics is your trusted partner for professional lashing and packing solutions. We specialize in securing automobiles, heavy machinery, and industrial cargo."
+      />
       <section className="relative py-20 lg:py-28 bg-[#2D3748]" data-testid="section-about-hero">
         <div className="absolute inset-0 opacity-20">
           <img
@@ -43,21 +48,21 @@ export default function About() {
 
             <div className="prose prose-lg max-w-none text-muted-foreground">
               <p className="text-lg leading-relaxed mb-6" data-testid="text-story-content">
-                Scotlink Logistics is a newly established company dedicated to providing professional 
-                lashing and packing services for the logistics and transportation industry. 
-                While we are new to the market, our team brings together expertise and a 
+                Scotlink Logistics is a newly established company dedicated to providing professional
+                lashing and packing services for the logistics and transportation industry.
+                While we are new to the market, our team brings together expertise and a
                 passion for excellence that sets us apart.
               </p>
               <p className="text-lg leading-relaxed mb-6">
-                We specialize in securing automobiles, heavy machinery, and industrial cargo 
-                for safe transportation. Our focus on safety, combined with the use of 
-                premium materials and professionally trained manpower, ensures that your 
+                We specialize in securing automobiles, heavy machinery, and industrial cargo
+                for safe transportation. Our focus on safety, combined with the use of
+                premium materials and professionally trained manpower, ensures that your
                 valuable cargo reaches its destination in perfect condition.
               </p>
               <p className="text-lg leading-relaxed">
-                At Scotlink Logistics, we believe that being new means being innovative, flexible, 
-                and fully committed to exceeding our customers&apos; expectations. We approach 
-                every project with fresh perspectives and a determination to deliver the 
+                At Scotlink Logistics, we believe that being new means being innovative, flexible,
+                and fully committed to exceeding our customers&apos; expectations. We approach
+                every project with fresh perspectives and a determination to deliver the
                 best possible service.
               </p>
             </div>
@@ -146,8 +151,8 @@ export default function About() {
                   <h3 className="text-2xl font-bold text-foreground">Our Vision</h3>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
-                  To become the most trusted name in cargo lashing and packing services, 
-                  recognized for our unwavering commitment to safety, quality, and customer 
+                  To become the most trusted name in cargo lashing and packing services,
+                  recognized for our unwavering commitment to safety, quality, and customer
                   satisfaction. We aim to set new industry standards through innovation and excellence.
                 </p>
               </CardContent>
@@ -162,9 +167,9 @@ export default function About() {
                   <h3 className="text-2xl font-bold text-foreground">Our Mission</h3>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
-                  To deliver exceptional lashing and packing solutions that ensure the safe 
-                  transportation of our clients&apos; valuable cargo. We are committed to using 
-                  premium materials, maintaining the highest safety standards, and providing 
+                  To deliver exceptional lashing and packing solutions that ensure the safe
+                  transportation of our clients&apos; valuable cargo. We are committed to using
+                  premium materials, maintaining the highest safety standards, and providing
                   outstanding customer service at competitive prices.
                 </p>
               </CardContent>

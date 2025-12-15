@@ -2,16 +2,17 @@ import { Link } from "wouter";
 import { Layout } from "@/components/layout/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Shield, 
-  Award, 
-  Users, 
-  Clock, 
-  DollarSign, 
+import {
+  Shield,
+  Award,
+  Users,
+  Clock,
+  DollarSign,
   HeartHandshake,
   ArrowRight,
   CheckCircle
 } from "lucide-react";
+import { SEO } from "@/components/seo";
 import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
 
 const reasons = [
@@ -86,6 +87,10 @@ const reasons = [
 export default function WhyChooseUs() {
   return (
     <Layout>
+      <SEO
+        title="Why Choose Us"
+        description="Discover why Scotlink Logistics is the preferred choice for industrial packing and lashing services in Dubai."
+      />
       <section className="relative py-20 lg:py-28 bg-[#2D3748]" data-testid="section-why-hero">
         <div className="absolute inset-0 opacity-20">
           <img
@@ -119,16 +124,16 @@ export default function WhyChooseUs() {
               Fresh Energy, Proven Values
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              As a newly established company, we bring fresh perspectives and modern approaches 
-              to the lashing and packing industry. What we may lack in years, we make up for 
+              As a newly established company, we bring fresh perspectives and modern approaches
+              to the lashing and packing industry. What we may lack in years, we make up for
               with passion, dedication, and an unwavering commitment to excellence.
             </p>
           </div>
 
           <div className="space-y-12">
             {reasons.map((reason, index) => (
-              <Card 
-                key={reason.title} 
+              <Card
+                key={reason.title}
                 className="overflow-visible"
                 data-testid={`card-reason-${reason.title.toLowerCase().replace(/\s+/g, "-")}`}
               >
@@ -167,7 +172,7 @@ export default function WhyChooseUs() {
             Ready to Experience the Difference?
           </h2>
           <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto mb-8">
-            Let us show you why companies trust Scotlink Logistics for their lashing and packing needs. 
+            Let us show you why companies trust Scotlink Logistics for their lashing and packing needs.
             Contact us today for a free consultation.
           </p>
           <Link href="/contact">

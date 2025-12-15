@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, CheckCircle, Car, Truck, Package, Layers, Link2, Loader2 } from "lucide-react";
+import { SEO } from "@/components/seo";
 import type { Service } from "@shared/schema";
 
 import autoImage from "@assets/stock_images/automobile_car_vehic_1b402b37.jpg";
@@ -108,6 +109,11 @@ export default function ServiceDetail() {
 
   return (
     <Layout>
+      <SEO
+        title={service.title}
+        description={service.shortDescription || service.title}
+        image={image}
+      />
       <section className="relative py-20 lg:py-28" data-testid="section-service-hero">
         <div className="absolute inset-0">
           <img

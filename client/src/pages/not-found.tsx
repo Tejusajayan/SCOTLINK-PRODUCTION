@@ -2,10 +2,16 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/layout";
 import { Home, ArrowLeft } from "lucide-react";
+import { SEO } from "@/components/seo";
 
 export default function NotFound() {
   return (
     <Layout>
+      <SEO
+        title="Page Not Found"
+        description="The page you are looking for does not exist."
+        noindex
+      />
       <div className="min-h-[60vh] flex items-center justify-center py-20" data-testid="page-not-found">
         <div className="text-center max-w-md mx-auto px-4">
           <div className="mb-8">

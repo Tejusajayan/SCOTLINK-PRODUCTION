@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle } from "lucide-react";
+import { SEO } from "@/components/seo";
 import { contactFormSchema, type ContactFormData } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import heroImage from "@assets/stock_images/industrial_shipping__dca51243.jpg";
@@ -71,6 +72,10 @@ export default function Contact() {
 
   return (
     <Layout>
+      <SEO
+        title="Contact Us"
+        description="Get in touch with Scotlink Logistics for a free consultation and quote for your lashing and packing needs."
+      />
       <section className="relative py-20 lg:py-28 bg-[#2D3748]" data-testid="section-contact-hero">
         <div className="absolute inset-0 opacity-20">
           <img
