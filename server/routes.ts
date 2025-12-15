@@ -134,8 +134,8 @@ Message: ${sanitizedData.message}
             subject: `New Contact Form Submission from ${sanitizedData.name} `,
             text: mailContent, // Use plain text as requested for the format
             html: `
-        < h2 > New Contact Form Submission </h2>
-          < p > <strong>Full name: </strong> ${sanitizedData.name}</p >
+        <h2> New Contact Form Submission </h2>
+          <p> <strong>Full name: </strong> ${sanitizedData.name}</p >
             <p><strong>Email: </strong> ${sanitizedData.email}</p >
               <p><strong>Phone: </strong> ${sanitizedData.phone}</p >
                 <p><strong>Message: </strong></p >
