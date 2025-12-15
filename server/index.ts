@@ -2,9 +2,15 @@ import dotenv from "dotenv";
 dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { serveStatic } from "./static";
 import { createServer } from "http";
+import path from "path";
 import cors from "cors";
+import {serveStatic} from "./vite";
+import { fileURLToPath } from "url";
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);  
 
 const app = express();
 const httpServer = createServer(app);
@@ -14,6 +20,8 @@ declare module "http" {
     rawBody: unknown;
   }
 }
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors({
   origin: 'https://www.scotlinklogistics.com', // change to your domain in production for security
