@@ -77,12 +77,12 @@ export class PgStorage implements IStorage {
       if (existingAdmins.length === 0) {
         // Create default admin user
         const salt = randomBytes(16).toString("hex");
-        const buf = (await scryptAsync("admin123", salt, 64)) as Buffer;
+        const buf = (await scryptAsync("Scovlog123", salt, 64)) as Buffer;
         const hashedPassword = `${buf.toString("hex")}.${salt}`;
 
         await db.insert(users).values({
           id: randomUUID(),
-          username: "admin",
+          username: "scotvarlog",
           password: hashedPassword,
           role: "admin",
         });
