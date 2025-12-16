@@ -31,7 +31,12 @@ export function ClientCarousel() {
         </div>
 
         <div className="relative overflow-hidden">
-          <div className="flex animate-scroll">
+          <div
+            className="flex animate-scroll w-max hover:[animation-play-state:paused]"
+            style={{
+              animationDuration: `${duplicatedLogos.length * 5}s`
+            }}
+          >
             {duplicatedLogos.map((logo, index) => (
               <div
                 key={`${logo.id}-${index}`}
