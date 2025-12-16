@@ -278,7 +278,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <Card className="overflow-hidden" data-testid="card-map">
+              {/*<Card className="overflow-hidden" data-testid="card-map">
                 <div className="h-[300px] bg-muted">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115492.45182228551!2d55.30787129273324!3d25.23223882253816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x76640f6e55a63d3%3A0x28a208e4d8c0889a!2sScotlink%20Logistics%20Services%20LLC!5e0!3m2!1sen!2sae!4v1765718236945!5m2!1sen!2sae"
@@ -291,7 +291,7 @@ export default function Contact() {
                     title="Scotlink Logistics Location"
                   />
                 </div>
-              </Card>
+              </Card>*/}
             </div>
           </div>
         </div>
