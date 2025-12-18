@@ -140,15 +140,19 @@ Message: ${sanitizedData.message}
               <p><strong>Phone: </strong> ${sanitizedData.phone}</p >
                 <p><strong>Message: </strong></p >
                   <p>${sanitizedData.message.replace(/\n/g, "<br>")} </p>
-                    < hr >
+                    <hr>
                     <p><small>Received at: ${timestamp} </small></p >
                       `,
           });
+          console.log("Contact email sent successfully");
         } catch (emailError) {
-          console.error("Failed to send email notification");
+          console.error("Failed to send email notification:", emailError);
+          // In a real app we might want to throw here, but for now we log it
+          // createContactSubmission was removed so we can't fallback to DB
           return res.status(500).json({ error: "Failed to send email" });
         }
       } else {
+        console.warn("SMTP configuration missing, email not sent.");
         return res.status(500).json({ error: "Email configuration missing" });
       }
 
@@ -487,8 +491,6 @@ ${pages.map(page => `  <url>
     const baseUrl = `https://${req.headers.host}`;
     const robots = `User-agent: *
 Allow: /
-Disallow: /vscolog
-Disallow: /vscolog/dashboard
 
 Sitemap: ${baseUrl}/sitemap.xml`;
 

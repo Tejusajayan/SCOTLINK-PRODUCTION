@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Anchor, Loader2, Lock } from "lucide-react";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
+import { SEO } from "@/components/seo";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -66,6 +67,7 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4" data-testid="page-admin-login">
+      <SEO title="Admin Login" description="Admin Login" noindex={true} />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -127,6 +129,10 @@ export default function AdminLogin() {
               </Button>
             </form>
           </Form>
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Default credentials: admin / admin123
+          </p>
         </CardContent>
       </Card>
     </div>
